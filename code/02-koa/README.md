@@ -33,3 +33,8 @@
 ## 06-mdServer2
 
 延續 05-mdServer，但是套用 theme.css 來美化呈現結果。
+
+## 參考文獻
+
+* [基於Nodejs的Koa2基本教學](https://medium.com/@rorast.power.game/%E5%9F%BA%E6%96%BCnodejs%E7%9A%84koa2%E5%9F%BA%E6%9C%AC%E6%95%99%E5%AD%B8-67d1ce0bb59a)
+* [阮一峰:Koa 框架教程](http://www.ruanyifeng.com/blog/2017/08/koa.html)

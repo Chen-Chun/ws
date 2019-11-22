@@ -36,10 +36,8 @@ app.use(async function (ctx) {
   }
 })
 
-if (!module.parent) {
-  app.listen(3000)
-  console.log('server run at http://localhost:3000/')
-}
+app.listen(3000)
+console.log('server run at http://localhost:3000/')
 
 function layout (html) {
   return `

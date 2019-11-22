@@ -10,7 +10,7 @@ const mdit = new MarkdownIt({ // 創建 markdown 的轉換物件！
   typographer: true
 })
 
-const app = module.exports = new Koa()
+const app = new Koa()
 const router = new KoaRouter()
 
 router

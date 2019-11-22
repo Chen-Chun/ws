@@ -4,7 +4,7 @@ const Koa = require('koa')
 const KoaRouter = require('koa-router')
 const koaLogger = require('koa-logger')
 
-const app = module.exports = new Koa()
+const app = new Koa()
 const router = new KoaRouter()
 
 router
