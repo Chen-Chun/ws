@@ -1,5 +1,7 @@
 var R = {}
 
+var mdit = window.markdownit()
+
 window.onhashchange = async function () {
   var r
   var tokens = window.location.hash.split('/')
@@ -66,7 +68,11 @@ R.new = function () {
 R.show = function (post) {
   return R.layout(post.title, `
     <h1>${post.title}</h1>
+<<<<<<< HEAD
     <p>${post.body}</p>
+=======
+    <p>${mdit.render(post.body)}</p>
+>>>>>>> 1fa99dce462711f21580310d78d0d9d2e1e9b8fd
   `)
 }
 

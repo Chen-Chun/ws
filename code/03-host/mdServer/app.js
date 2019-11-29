@@ -35,7 +35,7 @@ function mdRender(md) {
   return `
 <html>
 <head>
-  <link rel="stylesheet" type="text/css" href="theme.css">
+  <link rel="stylesheet" type="text/css" href="/theme.css">
 </head>
 <body>
   ${mdit.render(md)}
