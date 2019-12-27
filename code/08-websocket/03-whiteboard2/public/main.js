@@ -1,3 +1,7 @@
+// 修改 clientX 改為 offsetX, ...
+// 本程式畫圖對不準之 bug 的解決，必須直接設定 <canvas class="whiteboard" width="300", height="300"></canvas>
+// 而不能用 css 去設 width, height ， 否則 canvas 的 width, height 會變成 300, 150 (這很奇怪，感覺是個 bug)
+// 而且會導致畫 line 從 (0,0) 到 (100,100) 整個走樣，變成橫軸寬度減半。
 'use strict';
 
 (function() {
@@ -6,6 +10,7 @@
   var canvas = document.querySelectorAll('.whiteboard')[0];
   var colors = document.querySelectorAll('.color');
   var context = canvas.getContext('2d');
+  var w, h
 
   var current = {
     color: 'black'
@@ -37,8 +42,6 @@
     context.closePath();
 
     if (!emit) { return; }
-    var w = canvas.width;
-    var h = canvas.height;
 
     socket.emit('drawing', {
       x0: x0 / w,
@@ -49,23 +52,36 @@
     });
   }
 
+  // 注意各種不同的 mouseEvent: x,y, (使用 offsetX, Y 在右下半會有小誤差)
+  // https://stackoverflow.com/questions/6073505/what-is-the-difference-between-screenx-y-clientx-y-and-pagex-y
+  // https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
+  /*
+  Modern browser's now handle this for you. Chrome, IE9, and Firefox support the offsetX/Y like this, passing in the event from the click handler.
+
+function getRelativeCoords(event) {
+    return { x: event.offsetX, y: event.offsetY };
+}
+*/
+
+
   function onMouseDown(e){
     drawing = true;
-    current.x = e.clientX;
-    current.y = e.clientY;
+    current.x = e.offsetX;
+    current.y = e.offsetY;
+    console.log('current=', current, 'e=', e)
   }
 
   function onMouseUp(e){
     if (!drawing) { return; }
     drawing = false;
-    drawLine(current.x, current.y, e.clientX, e.clientY, current.color, true);
+    drawLine(current.x, current.y, e.offsetX, e.offsetY, current.color, true);
   }
 
   function onMouseMove(e){
     if (!drawing) { return; }
-    drawLine(current.x, current.y, e.clientX, e.clientY, current.color, true);
-    current.x = e.clientX;
-    current.y = e.clientY;
+    drawLine(current.x, current.y, e.offsetX, e.offsetY, current.color, true);
+    current.x = e.offsetX;
+    current.y = e.offsetY;
   }
 
   function onColorUpdate(e){
@@ -86,15 +102,17 @@
   }
 
   function onDrawingEvent(data){
-    var w = canvas.width;
-    var h = canvas.height;
     drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color);
   }
 
+  // 注意各種 width, height 的不同
+  // https://stackoverflow.com/questions/21064101/understanding-offsetwidth-clientwidth-scrollwidth-and-height-respectively
   // make the canvas fill its parent
   function onResize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    context = canvas.getContext('2d')
+    w = canvas.width = canvas.offsetWidth
+    h = canvas.height = canvas.offsetHeight
+    console.log('canvas=', canvas)
   }
 
 })();

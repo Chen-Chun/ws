@@ -1,3 +1,6 @@
+// 本程式畫圖對不準之 bug 的解決，必須直接設定 <canvas class="whiteboard" width="300", height="300"></canvas>
+// 而不能用 css 去設 width, height ， 否則 canvas 的 width, height 會變成 300, 150 (這很奇怪，感覺是個 bug)
+// 而且會導致畫 line 從 (0,0) 到 (100,100) 整個走樣，變成橫軸寬度減半。
 'use strict';
 
 (function() {
@@ -37,35 +40,36 @@
     context.closePath();
 
     if (!emit) { return; }
-    var w = canvas.width;
-    var h = canvas.height;
+    // var w = canvas.width;
+    // var h = canvas.height;
 
     socket.emit('drawing', {
-      x0: x0 / w,
-      y0: y0 / h,
-      x1: x1 / w,
-      y1: y1 / h,
+      x0: x0, // / w,
+      y0: y0, // / h,
+      x1: x1, // / w,
+      y1: y1, // / h,
       color: color
     });
   }
 
   function onMouseDown(e){
     drawing = true;
-    current.x = e.clientX;
-    current.y = e.clientY;
+    current.x = e.offsetX;
+    current.y = e.offsetY;
+    console.log('current=', current, 'e=', e)
   }
 
   function onMouseUp(e){
     if (!drawing) { return; }
     drawing = false;
-    drawLine(current.x, current.y, e.clientX, e.clientY, current.color, true);
+    drawLine(current.x, current.y, e.offsetX, e.offsetY, current.color, true);
   }
 
   function onMouseMove(e){
     if (!drawing) { return; }
-    drawLine(current.x, current.y, e.clientX, e.clientY, current.color, true);
-    current.x = e.clientX;
-    current.y = e.clientY;
+    drawLine(current.x, current.y, e.offsetX, e.offsetY, current.color, true);
+    current.x = e.offsetX;
+    current.y = e.offsetY;
   }
 
   function onColorUpdate(e){
@@ -86,15 +90,20 @@
   }
 
   function onDrawingEvent(data){
-    var w = canvas.width;
-    var h = canvas.height;
-    drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color);
+    // var w = canvas.width;
+    // var h = canvas.height;
+    // drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color);
+    drawLine(data.x0, data.y0, data.x1, data.y1, data.color);
   }
 
   // make the canvas fill its parent
   function onResize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    // canvas.width = window.innerWidth;
+    // canvas.height = window.innerHeight;
+    // canvas.width = 100
+    // canvas.height = 100
+    // console.log('onResize:canvas(w,h)=', canvas.width, canvas.height)
+    drawLine(0, 0, 100, 100, 'black', true);
   }
 
 })();
